@@ -1,19 +1,40 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+import * as firebase from 'firebase';
+
 import HeaderColumn from './components/HeaderColumn';
+import SelectComponent from './components/SelectComponent';
 
 class App extends Component {
+
+
+  constructor(){
+    super();
+    this.state = {
+      departments: [],
+    }
+  }
+
+  componentDidMount(){
+    const rootRef = firebase.database().ref();
+    const departmentsRef = rootRef.child('departments');
+    const teamsRef = rootRef.child('teams');
+
+    departmentsRef.on('value', snap => {
+      this.setState({
+        departments: snap.val(),
+      });
+    });
+  }
+
   render() {
     return (
       <div className="App container-fluid">
         <div className="row">
           <HeaderColumn />
         </div>
-        <div className="row">
-          <h2>Content</h2>
-        </div>
+        <SelectComponent data={this.state}/>
       </div>
     );
   }
